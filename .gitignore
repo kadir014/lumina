@@ -1,3 +1,12 @@
+# VSCode stuff
+.vscode/
+nova-physics-ws.code-workspace
+
+# Project local stuff
+build/
+deps/
+dev/
+
 # Prerequisites
 *.d
 
