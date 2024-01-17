@@ -1,6 +1,6 @@
 # VSCode stuff
 .vscode/
-nova-physics-ws.code-workspace
+lumina-ws.code-workspace
 
 # Project local stuff
 build/
