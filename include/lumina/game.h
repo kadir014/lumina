@@ -58,6 +58,7 @@ struct lmGame{
     bool is_running;
     lm_uint16 target_fps;
     lmClock *clock;
+    TTF_Font *font;
 };
 
 typedef struct lmGame lmGame;

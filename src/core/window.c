@@ -32,20 +32,22 @@ lmWindow *lmWindow_new(const char *title, lm_uint16 width, lm_uint16 height) {
         height,
         SDL_WINDOW_SHOWN
     );
-	if (!window->sdl_window) {
+    if (!window->sdl_window) {
         LM_ERROR(SDL_GetError());
-	}
+    }
 
     window->sdl_renderer = SDL_CreateRenderer(
         window->sdl_window,
         -1,
         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     );
-	if (!window->sdl_renderer) {
-		SDL_DestroyWindow(window->sdl_window);
-		SDL_Quit();
-		LM_ERROR(SDL_GetError());
-	};
+    if (!window->sdl_renderer) {
+        SDL_DestroyWindow(window->sdl_window);
+        SDL_Quit();
+        LM_ERROR(SDL_GetError());
+    };
+
+    SDL_SetRenderDrawBlendMode(window->sdl_renderer, SDL_BLENDMODE_BLEND);
 
     return window;
 }
@@ -54,6 +56,7 @@ void lmWindow_free(lmWindow *window) {
     if (!window) return;
 
     SDL_DestroyWindow(window->sdl_window);
+    SDL_DestroyRenderer(window->sdl_renderer);
     free(window);
 }
 

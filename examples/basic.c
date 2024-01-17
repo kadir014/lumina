@@ -12,11 +12,11 @@
 
 
 void on_start(lmGame *game) {
-    printf("Engine started running!\n");
+    printf("Game started running!\n");
 }
 
 void on_update(lmGame *game) {
-    printf("FPS: %f  dt: %f\n", game->clock->fps, game->clock->dt);
+    //printf("FPS: %f  dt: %f\n", game->clock->fps, game->clock->dt);
 }
 
 int main(int argc, char **argv) {
