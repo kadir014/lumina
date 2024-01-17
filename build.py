@@ -2,7 +2,6 @@ import sys
 import os
 import shutil
 import subprocess
-import webbrowser
 from time import perf_counter
 from pathlib import Path
 from http.server import SimpleHTTPRequestHandler
@@ -97,11 +96,9 @@ if BUILD_FOR_WEB:
     if out.returncode == 0:
         port = 8000
         httpd = ThreadingTCPServer(("", port), SimpleHTTPRequestHandler)
-        address = httpd.socket.getsockname()
+        address = "localhost"
 
-        print(f"Starting HTTP server on {address}:{port}")
-
-        webbrowser.open(f"http://localhost:{port}")
+        print(f"Starting HTTP server on http://{address}:{port}")
 
         try:
             httpd.serve_forever()

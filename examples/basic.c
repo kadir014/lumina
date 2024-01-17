@@ -12,7 +12,17 @@
 
 
 void on_start(lmGame *game) {
-    printf("Game started running!\n");
+    printf(
+        "Game started running!\n"
+        "Lumina:        %d.%d.%d\n"
+        "Compiled with: %s %s\n"
+        "Architecture:  %s\n"
+        "Platform:      %s\n",
+        LM_VERSION_MAJOR, LM_VERSION_MINOR, LM_VERSION_PATCH,
+        lmCompiler_as_string(), LM_COMPILER_VERSION_STR,
+        lmArch_as_string(),
+        lmPlatform_as_string()
+    );
 }
 
 void on_update(lmGame *game) {

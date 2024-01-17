@@ -15,9 +15,9 @@
 
 
 /**
- * @file _lumina.h
+ * @file types.h
  * 
- * @brief Internal API header.
+ * @brief Lumina type definitions.
  */
 
 
