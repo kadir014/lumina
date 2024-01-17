@@ -20,10 +20,12 @@
 
 
 #include "lumina/_lumina.h"
-#include "lumina/game.h"
-#include "lumina/window.h"
-#include "lumina/constants.h"
-#include "lumina/types.h"
-
+#include "lumina/core/constants.h"
+#include "lumina/core/types.h"
+#include "lumina/core/game.h"
+#include "lumina/core/window.h"
+#include "lumina/core/clock.h"
+#include "lumina/graphics/color.h"
+#include "lumina/resource/resource_manager.h"
 
 #endif

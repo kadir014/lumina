@@ -8,7 +8,7 @@
 
 */
 
-#include "lumina/window.h"
+#include "lumina/core/window.h"
 
 
 /**

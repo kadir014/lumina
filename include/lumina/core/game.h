@@ -12,8 +12,8 @@
 #define _LUMINA_GAME_H
 
 #include "lumina/_lumina.h"
-#include "lumina/window.h"
-#include "lumina/clock.h"
+#include "lumina/core/window.h"
+#include "lumina/core/clock.h"
 
 
 /**

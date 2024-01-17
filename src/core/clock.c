@@ -8,8 +8,8 @@
 
 */
 
-#include "lumina/clock.h"
-#include "lumina/constants.h"
+#include "lumina/core/clock.h"
+#include "lumina/core/constants.h"
 
 
 /**

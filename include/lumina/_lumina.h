@@ -33,7 +33,7 @@
 #include <stdbool.h>
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
-#include "lumina/types.h"
+#include "lumina/core/types.h"
 
 
 #if defined(__EMSCRIPTEN__)

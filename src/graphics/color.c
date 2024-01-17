@@ -8,7 +8,7 @@
 
 */
 
-#include "lumina/color.h"
+#include "lumina/graphics/color.h"
 
 
 /**

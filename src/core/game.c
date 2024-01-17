@@ -8,8 +8,8 @@
 
 */
 
-#include "lumina/game.h"
-#include "lumina/constants.h"
+#include "lumina/core/game.h"
+#include "lumina/core/constants.h"
 
 
 /**
@@ -67,7 +67,9 @@ lmGame *lmGame_new(lmGameDef game_def) {
 void lmGame_free(lmGame *game) {
     if (!game) return;
 
+    TTF_CloseFont(game->font);
     lmWindow_free(game->window);
+    lmClock_free(game->clock);
     free(game);
 
     SDL_Quit();
