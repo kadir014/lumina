@@ -12,17 +12,36 @@
 
 
 void on_start(lmGame *game) {
-    printf(
-        "Game started running!\n"
-        "Lumina:        %d.%d.%d\n"
-        "Compiled with: %s %s\n"
-        "Architecture:  %s\n"
-        "Platform:      %s\n",
-        LM_VERSION_MAJOR, LM_VERSION_MINOR, LM_VERSION_PATCH,
-        lmCompiler_as_string(), LM_COMPILER_VERSION_STR,
-        lmArch_as_string(),
-        lmPlatform_as_string()
-    );
+    #if LM_PLATFORM == LM_PLATFORM_WEB
+
+        printf(
+            "Game started running!\n"
+            "Lumina:        %d.%d.%d\n"
+            "Compiled with: Emscripten %d.%d.%d (%s %s)\n"
+            "Architecture:  %s\n"
+            "Platform:      %s\n",
+            LM_VERSION_MAJOR, LM_VERSION_MINOR, LM_VERSION_PATCH,
+            __EMSCRIPTEN_major__, __EMSCRIPTEN_minor__, __EMSCRIPTEN_tiny__,
+            LM_COMPILER_as_string(), LM_COMPILER_VERSION_STR,
+            LM_ARCH_as_string(),
+            LM_PLATFORM_as_string()
+        );
+
+    #else
+
+        printf(
+            "Game started running!\n"
+            "Lumina:        %d.%d.%d\n"
+            "Compiled with: %s %s\n"
+            "Architecture:  %s\n"
+            "Platform:      %s\n",
+            LM_VERSION_MAJOR, LM_VERSION_MINOR, LM_VERSION_PATCH,
+            LM_COMPILER_as_string(), LM_COMPILER_VERSION_STR,
+            LM_ARCH_as_string(),
+            LM_PLATFORM_as_string()
+        );
+
+    #endif
 }
 
 void on_update(lmGame *game) {
