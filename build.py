@@ -2,10 +2,14 @@ import sys
 import os
 import shutil
 import subprocess
+import platform
 from time import perf_counter
 from pathlib import Path
 from http.server import SimpleHTTPRequestHandler
 from socketserver import ThreadingTCPServer
+
+
+IS_WIN = platform.system() == "Windows"
 
 
 BASE_PATH = Path(os.getcwd())
@@ -112,11 +116,14 @@ else:
 
     compiler = "gcc"
     options = "-std=gnu11 -g3 -Wall"
-    binary = "lumina_game.exe"
+    if IS_WIN:
+        binary = "lumina_game.exe"
+    else:
+        binary = "lumina_game"
 
     libs = [
         BASE_PATH / "deps" / "lib" / "SDL2",
-        BASE_PATH / "deps" / "lib" /"SDL2_ttf"
+        BASE_PATH / "deps" / "lib" / "SDL2_ttf"
     ]
 
     links = "-lSDL2main -lSDL2 -lSDL2_ttf"
@@ -131,8 +138,9 @@ else:
     print(f"\nCompilation finished in {round(end - start, 2)}s.")
 
     if os.path.exists(binary):
-        shutil.copyfile(BASE_PATH / "deps" / "bin" / "SDL2" / "SDL2.dll", BUILD_PATH / "SDL2.dll")
-        shutil.copyfile(BASE_PATH / "deps" / "bin" / "SDL2_ttf" / "SDL2_ttf.dll", BUILD_PATH / "SDL2_ttf.dll")
+        if IS_WIN:
+           shutil.copyfile(BASE_PATH / "deps" / "bin" / "SDL2" / "SDL2.dll", BUILD_PATH / "SDL2.dll")
+           shutil.copyfile(BASE_PATH / "deps" / "bin" / "SDL2_ttf" / "SDL2_ttf.dll", BUILD_PATH / "SDL2_ttf.dll")
 
         os.mkdir(BUILD_PATH / "assets")
         for *_, files in os.walk(EXAMPLES_PATH / "assets"):
@@ -142,5 +150,8 @@ else:
                     BUILD_PATH / "assets" / file
                 )
 
-        result = subprocess.run(binary)
+        if IS_WIN:
+            result = subprocess.run(binary)
+        else:
+            result = subprocess.run(f"./{binary}")
         print(f"{binary} exited with code {result.returncode}")
