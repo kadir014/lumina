@@ -12,7 +12,7 @@
 
 
 /**
- * @file window.c
+ * @file core/window.c
  * 
  * @brief Window.
  */
@@ -20,9 +20,7 @@
 
 lmWindow *lmWindow_new(const char *title, lm_uint16 width, lm_uint16 height) {
     lmWindow *window = LM_NEW(lmWindow);
-    if (!window) {
-        LM_ERROR("Unable to allocate memory.");
-    }
+    LM_MEMORY_ASSERT(window);
 
     window->sdl_window = SDL_CreateWindow(
         title,

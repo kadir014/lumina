@@ -15,7 +15,7 @@
 
 
 /**
- * @file hashmap.h
+ * @file collections/hashmap.h
  * 
  * @brief Hash map implementation.
  */

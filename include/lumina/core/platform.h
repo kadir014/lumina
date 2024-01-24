@@ -13,7 +13,7 @@
 
 
 /**
- * @file platform.h
+ * @file core/platform.h
  * 
  * @brief Platform identification.
  */

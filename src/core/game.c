@@ -10,10 +10,11 @@
 
 #include "lumina/core/game.h"
 #include "lumina/core/constants.h"
+#include "lumina/graphics/draw.h"
 
 
 /**
- * @file game.c
+ * @file core/game.c
  * 
  * @brief Top-level application class.
  */
@@ -21,7 +22,7 @@
 
 lmGame *lmGame_new(lmGameDef game_def) {
     lmGame *game = LM_NEW(lmGame);
-    if (!game) LM_ERROR("Unable to allocate memory.");
+    LM_MEMORY_ASSERT(game);
 
     #ifdef LM_WEB
         lm_uint32 init_flags = SDL_INIT_EVERYTHING & ~SDL_INIT_HAPTIC;
@@ -43,14 +44,8 @@ lmGame *lmGame_new(lmGameDef game_def) {
         game_def.window_height
     );
 
-    game->font = TTF_OpenFont("assets/FiraCode-Regular.ttf", 18);
-    if (game->font == NULL) {
-        LM_ERROR(TTF_GetError());
-    }
-    TTF_SetFontStyle(game->font, TTF_STYLE_NORMAL);
-    TTF_SetFontOutline(game->font, 0);
-    TTF_SetFontKerning(game->font, 1);
-    TTF_SetFontHinting(game->font, TTF_HINTING_NORMAL);
+    game->resource_manager = lmResourceManager_new();
+    lmResourceManager_load_font(game->resource_manager, "assets/FiraCode-Regular.ttf", 18);
 
     game->on_start = game_def.on_start;
     game->on_update = game_def.on_update;
@@ -67,9 +62,9 @@ lmGame *lmGame_new(lmGameDef game_def) {
 void lmGame_free(lmGame *game) {
     if (!game) return;
 
-    TTF_CloseFont(game->font);
     lmWindow_free(game->window);
     lmClock_free(game->clock);
+    lmResourceManager_free(game->resource_manager);
     free(game);
 
     SDL_Quit();
@@ -93,39 +88,21 @@ static void lmGame_main_loop(void *game_p) {
 
     if (game->on_render) game->on_render(game);
 
-    {
-        char text[24];
-        sprintf(text, "Lumina %d.%d.%d", LM_VERSION_MAJOR, LM_VERSION_MINOR, LM_VERSION_PATCH);
-        SDL_Surface *text_surf = TTF_RenderText_Blended(game->font, text, (SDL_Color){255, 255, 255, 255});
-        SDL_Texture *text_tex = SDL_CreateTextureFromSurface(game->window->sdl_renderer, text_surf);
-        SDL_FreeSurface(text_surf);
-        int width, height;
-        SDL_QueryTexture(text_tex, NULL, NULL, &width, &height);
-        SDL_Rect text_rect = {5, 5, width, height};
-        SDL_RenderCopy(game->window->sdl_renderer, text_tex, NULL, &text_rect);
-    }
-    {
-        char text[24];
-        sprintf(text, "SDL %d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
-        SDL_Surface *text_surf = TTF_RenderText_Blended(game->font, text, (SDL_Color){255, 255, 255, 255});
-        SDL_Texture *text_tex = SDL_CreateTextureFromSurface(game->window->sdl_renderer, text_surf);
-        SDL_FreeSurface(text_surf);
-        int width, height;
-        SDL_QueryTexture(text_tex, NULL, NULL, &width, &height);
-        SDL_Rect text_rect = {5, 5 + (20 * 1), width, height};
-        SDL_RenderCopy(game->window->sdl_renderer, text_tex, NULL, &text_rect);
-    }
-    {
-        char text[16];
-        sprintf(text, "FPS: %.1f", game->clock->fps);
-        SDL_Surface *text_surf = TTF_RenderText_Blended(game->font, text, (SDL_Color){255, 255, 255, 255});
-        SDL_Texture *text_tex = SDL_CreateTextureFromSurface(game->window->sdl_renderer, text_surf);
-        SDL_FreeSurface(text_surf);
-        int width, height;
-        SDL_QueryTexture(text_tex, NULL, NULL, &width, &height);
-        SDL_Rect text_rect = {5, 5 + (20 * 2), width, height};
-        SDL_RenderCopy(game->window->sdl_renderer, text_tex, NULL, &text_rect);
-    }
+    //lmFont *font = lmResourceManager_get_font("FiraCode", 18);
+    lmFont *font = lmResourceManager_get_font(game->resource_manager, "assets/FiraCode-Regular.ttf", 18);
+    lmColor text_color = (lmColor){255, 255, 255, 255};
+
+    char text0[24];
+    sprintf(text0, "Lumina %d.%d.%d", LM_VERSION_MAJOR, LM_VERSION_MINOR, LM_VERSION_PATCH);
+    lm_draw_text(game, font, text0, 5, 5 + (24 * 0), text_color);
+
+    char text1[24];
+    sprintf(text1, "SDL %d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+    lm_draw_text(game, font, text1, 5, 5 + (24 * 1), text_color);
+
+    char text2[16];
+    sprintf(text2, "FPS: %.1f", game->clock->fps);
+    lm_draw_text(game, font, text2, 5, 5 + (24 * 2), text_color);
 
     SDL_RenderPresent(game->window->sdl_renderer);
 }

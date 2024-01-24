@@ -12,7 +12,7 @@
 
 
 /**
- * @file array.c
+ * @file collections/array.c
  * 
  * @brief Type-generic dynamically growing array implementation.
  */

@@ -13,7 +13,7 @@
 
 
 /**
- * @file hashmap.c
+ * @file collections/hashmap.c
  * 
  * @brief Hash map implementation.
  * 

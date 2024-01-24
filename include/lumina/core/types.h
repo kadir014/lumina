@@ -15,7 +15,7 @@
 
 
 /**
- * @file types.h
+ * @file core/types.h
  * 
  * @brief Lumina type definitions.
  */

@@ -15,7 +15,7 @@
 
 
 /**
- * @file clock.h
+ * @file core/clock.h
  * 
  * @brief Clock.
  */

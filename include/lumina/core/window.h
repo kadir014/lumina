@@ -15,7 +15,7 @@
 
 
 /**
- * @file window.h
+ * @file core/window.h
  * 
  * @brief Window.
  */

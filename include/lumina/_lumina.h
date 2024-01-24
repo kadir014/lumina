@@ -77,5 +77,19 @@
     LM_EXIT(EXIT_FAILURE);              \
 })
 
+/**
+ * @brief Raise error if the memory was not allocated.
+ * 
+ * @param object Pointer to memory. Raises if NULL.
+ */
+#define LM_MEMORY_ASSERT(object) \
+    if (!(object)) LM_ERROR("Unable to allocate memory.")
+
+
+/* Forward decleration of game struct for other headers. */
+
+struct lmGame;
+
+
 
 #endif

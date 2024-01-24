@@ -13,7 +13,7 @@
 
 
 /**
- * @file clock.c
+ * @file core/clock.c
  * 
  * @brief Clock.
  */
@@ -21,7 +21,7 @@
 
 lmClock *lmClock_new() {
     lmClock *clock = LM_NEW(lmClock);
-    if (!clock) LM_ERROR("Unable to allocate memory.");
+    LM_MEMORY_ASSERT(clock);
 
     clock->frequency = (double)SDL_GetPerformanceFrequency();
     clock->accumulated_fps = 0.0;

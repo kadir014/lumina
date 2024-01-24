@@ -12,7 +12,7 @@
 
 
 /**
- * @file color.c
+ * @file graphics/color.c
  * 
  * @brief Color.
  */

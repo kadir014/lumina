@@ -15,7 +15,7 @@
 
 
 /**
- * @file array.h
+ * @file collections/array.h
  * 
  * @brief Type-generic dynamically growing array implementation.
  */

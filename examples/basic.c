@@ -45,7 +45,7 @@ void on_start(lmGame *game) {
 }
 
 void on_update(lmGame *game) {
-    //printf("FPS: %f  dt: %f\n", game->clock->fps, game->clock->dt);
+    // Called every game tick
 }
 
 int main(int argc, char **argv) {

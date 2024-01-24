@@ -16,7 +16,7 @@
 
 
 /**
- * @file resource_manager.h
+ * @file resource/resource_manager.h
  * 
  * @brief Resource manager.
  */
@@ -37,9 +37,15 @@ lmResourceManager *lmResourceManager_new();
 
 void lmResourceManager_free(lmResourceManager *resource_manager);
 
-lmFont *lmResourceManager_load_font(
+void lmResourceManager_load_font(
     lmResourceManager *resource_manager,
-    const char *path,
+    char *path,
+    lm_uint32 size
+);
+
+lmFont *lmResourceManager_get_font(
+    lmResourceManager *resource_manager,
+    char *name,
     lm_uint32 size
 );
 

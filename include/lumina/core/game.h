@@ -14,16 +14,14 @@
 #include "lumina/_lumina.h"
 #include "lumina/core/window.h"
 #include "lumina/core/clock.h"
+#include "lumina/resource/resource_manager.h"
 
 
 /**
- * @file game.h
+ * @file core/game.h
  * 
  * @brief Top-level application class.
  */
-
-
-struct lmGame;
 
 
 typedef void ( *lmGameEvent)(struct lmGame *);
@@ -58,7 +56,7 @@ struct lmGame{
     bool is_running;
     lm_uint16 target_fps;
     lmClock *clock;
-    TTF_Font *font;
+    lmResourceManager *resource_manager;
 };
 
 typedef struct lmGame lmGame;

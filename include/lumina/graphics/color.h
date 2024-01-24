@@ -15,7 +15,7 @@
 
 
 /**
- * @file color.h
+ * @file graphics/color.h
  * 
  * @brief Color.
  */
@@ -30,6 +30,8 @@ typedef struct {
     lm_uint8 b;
     lm_uint8 a;
 } lmColor;
+
+#define lmColor_TO_SDL(color) (SDL_Color){(color).r, (color).g, (color).b, (color).a}
 
 /**
  * @brief Convert color from HSV to RGB.
