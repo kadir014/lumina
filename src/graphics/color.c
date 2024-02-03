@@ -18,17 +18,17 @@
  */
 
 
-lmColor lmColor_from_hsv(lmColor rgb_color) {
+lmColor lmColor_from_hsv(lmColor hsv_color) {
     // https://stackoverflow.com/a/6930407
 
-    float h = (float)rgb_color.r * (360.0 / 255.0);
-    float s = (float)rgb_color.g / 255.0;
-    float v = (float)rgb_color.b / 255.0;
+    float h = (float)hsv_color.r * (360.0 / 255.0);
+    float s = (float)hsv_color.g / 255.0;
+    float v = (float)hsv_color.b / 255.0;
 
     float hh, p, q, t, ff;
     long i;
     lmColor out;
-    out.a = rgb_color.a;
+    out.a = hsv_color.a;
 
     if (s <= 0.0) {
         out.r = v * 255;

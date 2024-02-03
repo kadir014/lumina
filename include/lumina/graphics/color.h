@@ -36,10 +36,10 @@ typedef struct {
 /**
  * @brief Convert color from HSV to RGB.
  * 
- * @param rgb_color Color in RGB space.
+ * @param hsv_color Color in HSV space.
  * @return lmColor 
  */
-lmColor lmColor_from_hsv(lmColor rgb_color);
+lmColor lmColor_from_hsv(lmColor hsv_color);
 
 
 #endif
