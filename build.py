@@ -29,7 +29,7 @@ os.chdir(BUILD_PATH)
 
 
 srcs = [
-    EXAMPLES_PATH / "basic.c"
+    EXAMPLES_PATH / "bouncing.c"
 ]
 
 for root, _, files in os.walk(SRC_PATH):

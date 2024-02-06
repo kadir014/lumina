@@ -28,6 +28,8 @@ lmClock *lmClock_new() {
     clock->frame_time_full = 1.0;
     clock->fps = 0.0;
     clock->dt = 0.0;
+    clock->start = (double)SDL_GetPerformanceCounter() / clock->frequency;
+    clock->time = 0.0;
     clock->timer_start = 0;
     clock->timer_end = 0;
     clock->timer_full_end = 0;
@@ -68,4 +70,6 @@ void lmClock_tick(lmClock *clock, double target_fps) {
     clock->dt = clock->frame_time_full / 1000.0;
 
     clock->timer_start = SDL_GetPerformanceCounter();
+
+    clock->time = (double)SDL_GetPerformanceCounter() / clock->frequency - clock->start;
 }

@@ -16,7 +16,7 @@
 /**
  * @file core/game.c
  * 
- * @brief Top-level application class.
+ * @brief Top-level application struct.
  */
 
 
@@ -25,6 +25,7 @@ lmGame *lmGame_new(lmGameDef game_def) {
     LM_MEMORY_ASSERT(game);
 
     #ifdef LM_WEB
+        // Some modules can't be initialized on web
         lm_uint32 init_flags = SDL_INIT_EVERYTHING & ~SDL_INIT_HAPTIC;
     #else
         lm_uint32 init_flags = SDL_INIT_EVERYTHING;
@@ -47,7 +48,9 @@ lmGame *lmGame_new(lmGameDef game_def) {
     game->resource_manager = lmResourceManager_new();
     lmResourceManager_load_font(game->resource_manager, "assets/FiraCode-Regular.ttf", 18);
 
-    game->on_start = game_def.on_start;
+    game->ecs = lmECS_new();
+
+    game->on_ready = game_def.on_ready;
     game->on_update = game_def.on_update;
     game->on_render = game_def.on_render;
 
@@ -65,6 +68,7 @@ void lmGame_free(lmGame *game) {
     lmWindow_free(game->window);
     lmClock_free(game->clock);
     lmResourceManager_free(game->resource_manager);
+    lmECS_free(game->ecs);
     free(game);
 
     SDL_Quit();
@@ -84,6 +88,7 @@ static void lmGame_main_loop(void *game_p) {
 
     if (game->on_update) game->on_update(game);
 
+    SDL_SetRenderDrawColor(game->window->sdl_renderer, 0, 0, 0, 255);
     SDL_RenderClear(game->window->sdl_renderer);
 
     if (game->on_render) game->on_render(game);
@@ -108,8 +113,8 @@ static void lmGame_main_loop(void *game_p) {
 }
 
 void lmGame_run(lmGame *game) {
-    if (game->on_start) game->on_start(game);
     game->is_running = true;
+    if (game->on_ready) game->on_ready(game);
 
     #ifdef LM_WEB
 

@@ -27,6 +27,8 @@ typedef struct {
     double frame_time_full;
     double fps;
     double dt;
+    double start;
+    double time;
     lm_uint64 timer_start;
     lm_uint64 timer_end;
     lm_uint64 timer_full_end;
