@@ -21,12 +21,13 @@
 
 static lm_uint64 _lm_entity_hash(void *item) {
     lmEntity *entity = (lmEntity *)item;
+    // Entity IDs are supposed to be unique so no need to hash.
     return entity->id;
 }
 
 static lm_uint64 _lm_comp_hash(void *item) {
     lmComponent *comp = (lmComponent *)item;
-    return comp->id;
+    return lm_u64cantor(comp->id, comp->entity_id);
 }
 
 static lm_uint64 _lm_system_hash(void *item) {
@@ -97,12 +98,11 @@ void lmEntity_add_component(
     // The memory is handled by the entity manager.
     void *heap_comp_data = malloc(comp_data_size);
     memcpy(heap_comp_data, comp_data, comp_data_size);
-    lmHashMap_set(ecs->components, &(lmComponent){.id=comp_id, .data=heap_comp_data});
+    lmHashMap_set(ecs->components, &(lmComponent){.id=comp_id, .entity_id=entity_id, .data=heap_comp_data});
 
     lmEntity *entity = lmHashMap_get(ecs->entities, &(lmEntity){.id=entity_id});
     entity->comp_ids[entity->comps_size] = comp_id;
     entity->comps_size++;
-    lmHashMap_set(ecs->entities, entity);
 }
 
 void lmEntity_add_system(
@@ -139,22 +139,22 @@ void lmEntity_run_system(lmECS *ecs, const char *system_name) {
     lmSystem *system = (lmSystem *)lmHashMap_get(ecs->systems, &(lmSystem){.name=system_name});
     size_t system_comps = system->comp_ids_size;
 
+    lmComponent **comps = (lmComponent **)malloc(sizeof(lmComponent *) * LM_MAX_COMPONENTS);
+
     size_t i = 0;
     void *item;
     while (lmHashMap_iter(ecs->entities, &i, &item)) {
         lmEntity *entity = (lmEntity *)item;
 
-        // Entity has all the components the system wants
+        // Entity has all the components the system requires
         if (_lm_array_match(entity->comp_ids, entity->comps_size, system->comp_ids, system->comp_ids_size)) {
-            lmComponent **comps = (lmComponent **)malloc(sizeof(lmComponent *) * system_comps);
-
             for (size_t j = 0; j < system_comps; j++) {
-                comps[j] = lmHashMap_get(ecs->components, &(lmComponent){.id=system->comp_ids[j]});
+                comps[j] = lmHashMap_get(ecs->components, &(lmComponent){.id=system->comp_ids[j], .entity_id=entity->id});
             }
 
             system->function(entity->id, comps, system_comps);
-
-            free(comps);
         }
     }
+
+    free(comps);
 }

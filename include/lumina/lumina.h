@@ -31,6 +31,8 @@
 #include "lumina/core/clock.h"
 #include "lumina/core/ecs.h"
 
+#include "lumina/components/transform.h"
+
 #include "lumina/graphics/color.h"
 #include "lumina/graphics/draw.h"
 

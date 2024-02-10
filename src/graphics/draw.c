@@ -115,9 +115,12 @@ void lm_fill_polygon(lmGame *game, lmVector2 vertices[], size_t vertices_len) {
         };
     }
 
-    int *indices = (int *)malloc(sizeof(int) * triangles);
+    // Cast the array size to uint32_t so the compiler doesn't complain
+    // about maximum object size
+    // A polygon should have that many indices anyway
+    int *indices = (int *)malloc((uint32_t)(sizeof(int) * triangles));
 
-    // Triangulate polygon
+    // Triangulate the polygon
     size_t j = 2;
     for (size_t i = 2; i < triangles; i += 3) {
         indices[i - 2] = 0;

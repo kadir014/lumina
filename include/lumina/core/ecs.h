@@ -26,6 +26,7 @@
 
 typedef struct {
     lm_uint64 id;
+    lm_uint64 entity_id;
     void *data;
 } lmComponent;
 
@@ -74,15 +75,6 @@ void lmEntity_add_system(
 );
 
 void lmEntity_run_system(lmECS *ecs, const char *system_name);
-
-
-typedef struct {
-    lmVector2 position;
-    float rotation;
-    lmVector2 scale;
-} lmTransform;
-
-static const lmTransform lmTransform_default = {LM_VEC2(0.0, 0.0), 0.0, LM_VEC2(1.0, 1.0)};
 
 
 #endif
