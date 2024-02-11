@@ -15,7 +15,7 @@
 
 
 /**
- * @file vector.h
+ * @file math/vector.h
  * 
  * @brief 2D vector math.
  */

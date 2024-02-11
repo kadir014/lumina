@@ -8,14 +8,14 @@
 
 */
 
-#ifndef _LUMINA_CONSTANTS_H
-#define _LUMINA_CONSTANTS_H
+#ifndef _LUMINA_CORE_CONSTANTS_H
+#define _LUMINA_CORE_CONSTANTS_H
 
 
 /**
  * @file core/constants.h
  * 
- * @brief Constants.
+ * @brief Core constants of the engine.
  */
 
 

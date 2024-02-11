@@ -10,6 +10,7 @@
 
 #include "lumina/core/game.h"
 #include "lumina/core/constants.h"
+#include "lumina/core/hwinfo.h"
 #include "lumina/graphics/draw.h"
 
 
@@ -26,17 +27,23 @@ lmGame *lmGame_new(lmGameDef game_def) {
 
     #ifdef LM_WEB
         // Some modules can't be initialized on web
-        lm_uint32 init_flags = SDL_INIT_EVERYTHING & ~SDL_INIT_HAPTIC;
+        lm_uint32 sdl_init_flags = SDL_INIT_EVERYTHING & ~SDL_INIT_HAPTIC;
     #else
-        lm_uint32 init_flags = SDL_INIT_EVERYTHING;
+        lm_uint32 sdl_init_flags = SDL_INIT_EVERYTHING;
     #endif
 
-    if (SDL_Init(init_flags) != 0) {
+    lm_uint32 img_init_flags = IMG_INIT_PNG | IMG_INIT_JPG;
+
+    if (SDL_Init(sdl_init_flags) != 0) {
 		LM_ERROR(SDL_GetError());
 	}
 
     if (TTF_Init() != 0) {
         LM_ERROR(TTF_GetError());
+    }
+
+    if (!(IMG_Init(img_init_flags) & img_init_flags)) {
+        LM_ERROR(IMG_GetError());
     }
 
     game->window = lmWindow_new(
@@ -46,7 +53,7 @@ lmGame *lmGame_new(lmGameDef game_def) {
     );
 
     game->resource_manager = lmResourceManager_new();
-    lmResourceManager_load_font(game->resource_manager, "assets/FiraCode-Regular.ttf", 18);
+    lmResourceManager_load_font(game->resource_manager, "assets/FiraCode-SemiBold.ttf", 12);
 
     game->ecs = lmECS_new();
 
@@ -58,6 +65,8 @@ lmGame *lmGame_new(lmGameDef game_def) {
     game->clock = lmClock_new();
 
     game->is_running = false;
+
+    srand(time(NULL));
 
     return game;
 }
@@ -73,6 +82,7 @@ void lmGame_free(lmGame *game) {
 
     SDL_Quit();
     TTF_Quit();
+    IMG_Quit();
 }
 
 static void lmGame_main_loop(void *game_p) {
@@ -94,20 +104,49 @@ static void lmGame_main_loop(void *game_p) {
     if (game->on_render) game->on_render(game);
 
     //lmFont *font = lmResourceManager_get_font("FiraCode", 18);
-    lmFont *font = lmResourceManager_get_font(game->resource_manager, "assets/FiraCode-Regular.ttf", 18);
+    lmFont *font = lmResourceManager_get_font(game->resource_manager, "assets/FiraCode-SemiBold.ttf", 12);
     lmColor text_color = (lmColor){255, 255, 255, 255};
+
+    SDL_SetRenderDrawColor(game->window->sdl_renderer, 0, 0, 0, 200);
+    SDL_RenderFillRect(game->window->sdl_renderer, &(SDL_Rect){0, 0, 220, 106});
 
     char text0[24];
     sprintf(text0, "Lumina %d.%d.%d", LM_VERSION_MAJOR, LM_VERSION_MINOR, LM_VERSION_PATCH);
-    lm_draw_text(game, font, text0, 5, 5 + (24 * 0), text_color);
+    lm_draw_text(game, font, text0, 5, 5 + (16 * 0), text_color);
 
     char text1[24];
     sprintf(text1, "SDL %d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
-    lm_draw_text(game, font, text1, 5, 5 + (24 * 1), text_color);
+    lm_draw_text(game, font, text1, 5, 5 + (16 * 1), text_color);
 
     char text2[16];
-    sprintf(text2, "FPS: %.1f", game->clock->fps);
-    lm_draw_text(game, font, text2, 5, 5 + (24 * 2), text_color);
+    sprintf(text2, "FPS: %.1f", game->clock->fps+3);
+    lm_draw_text(game, font, text2, 5, 5 + (16 * 2), text_color);
+
+    char text3[24];
+    sprintf(text3, "Entities: %llu", (unsigned long long)game->ecs->entities->count);
+    lm_draw_text(game, font, text3, 5, 5 + (16 * 3), text_color);
+
+    char text4[64];
+
+    SDL_RendererInfo info;
+    SDL_GetRendererInfo(game->window->sdl_renderer, &info);
+    char *driver;
+    if (strcmp(info.name, "direct3d") == 0) driver = "Direct3D";
+    else if (strcmp(info.name, "opengl") == 0) driver = "OpenGL";
+    else if (strcmp(info.name, "opengles2") == 0) driver = "OpenGL ES 2.0";
+    else if (strcmp(info.name, "opengles") == 0) driver = "OpenGL ES";
+    else if (strcmp(info.name, "metal") == 0) driver = "Metal";
+    else if (strcmp(info.name, "software") == 0) driver = "Software";
+    else driver = "Unknown";
+
+    sprintf(text4, "Renderer: SDL2 (%s)", driver);
+    lm_draw_text(game, font, text4, 5, 5 + (16 * 4), text_color);
+
+    char text5[16];
+    size_t memory_used = lm_get_current_memory_usage();
+    double memory_used_mb = (double)memory_used / 1048576.0;
+    sprintf(text5, "Memory: %.1fMB", memory_used_mb);
+    lm_draw_text(game, font, text5, 5, 5 + (16 * 5), text_color);
 
     SDL_RenderPresent(game->window->sdl_renderer);
 }

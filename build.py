@@ -86,7 +86,10 @@ if BUILD_FOR_WEB:
 
     compiler = "emcc"
     options = "-std=gnu11 -g3 -Wall"
-    em_settings = "-sWASM=1 -sUSE_SDL=2 -sUSE_SDL_TTF=2 -sEXIT_RUNTIME --preload-file ../examples/assets@/assets"
+    extensions = "-sUSE_SDL=2 -sUSE_SDL_TTF=2 -sUSE_SDL_IMAGE=2"
+    formats = "-sSDL2_IMAGE_FORMATS=[\"bmp\",\"png\",\"jpg\"]"
+    preload = "../examples/assets@/assets"
+    em_settings = f"-sWASM=1 -sEXIT_RUNTIME {extensions} {formats} --preload-file {preload}"
 
     compile_command = f"{compiler} {options} -o index.js {' '.join(str(i) for i in srcs)} -I{' -I'.join(str(i) for i in includes)} {em_settings}"
     print(compile_command)
@@ -115,7 +118,7 @@ else:
     print("Building for desktop.\n")
 
     compiler = "gcc"
-    options = "-std=gnu11 -g3 -Wall"
+    options = "-std=gnu11 -O3 -Wall"
     if IS_WIN:
         binary = "lumina_game.exe"
     else:
@@ -123,10 +126,11 @@ else:
 
     libs = [
         BASE_PATH / "deps" / "lib" / "SDL2",
-        BASE_PATH / "deps" / "lib" / "SDL2_ttf"
+        BASE_PATH / "deps" / "lib" / "SDL2_ttf",
+        BASE_PATH / "deps" / "lib" / "SDL2_image"
     ]
 
-    links = "-lSDL2main -lSDL2 -lSDL2_ttf"
+    links = "-lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image"
 
     compile_cmd = f"{compiler} {options} -o {binary} {' '.join(str(i) for i in srcs)} -I{' -I'.join(str(i) for i in includes)} -L{' -L'.join(str(i) for i in libs)} {links}"
     print(compile_cmd)
@@ -141,6 +145,7 @@ else:
         if IS_WIN:
            shutil.copyfile(BASE_PATH / "deps" / "bin" / "SDL2" / "SDL2.dll", BUILD_PATH / "SDL2.dll")
            shutil.copyfile(BASE_PATH / "deps" / "bin" / "SDL2_ttf" / "SDL2_ttf.dll", BUILD_PATH / "SDL2_ttf.dll")
+           shutil.copyfile(BASE_PATH / "deps" / "bin" / "SDL2_image" / "SDL2_image.dll", BUILD_PATH / "SDL2_image.dll")
 
         os.mkdir(BUILD_PATH / "assets")
         for *_, files in os.walk(EXAMPLES_PATH / "assets"):

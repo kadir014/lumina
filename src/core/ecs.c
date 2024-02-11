@@ -60,7 +60,7 @@ void lmECS_free(lmECS *ecs) {
     i = 0;
     while (lmHashMap_iter(ecs->components, &i, &item)) {
         lmComponent *comp = (lmComponent *)item;
-        free(comp->data);
+        if (comp->allocated) free(comp->data);
     }
 
     i = 0;
@@ -75,7 +75,7 @@ void lmECS_free(lmECS *ecs) {
     free(ecs);
 }
 
-lm_uint64 lmEntity_new(lmECS *ecs) {
+lm_uint64 lmECS_new_entity(lmECS *ecs) {
     lm_uint64 entity = ecs->entities->count;
 
     lm_uint64 *comp_ids = (lm_uint64 *)malloc(sizeof(lm_uint64) * LM_MAX_COMPONENTS);
@@ -86,7 +86,7 @@ lm_uint64 lmEntity_new(lmECS *ecs) {
     return entity;
 }
 
-void lmEntity_add_component(
+void lmECS_add_component(
     lmECS *ecs,
     lm_uint64 entity_id,
     lm_uint64 comp_id,
@@ -98,19 +98,33 @@ void lmEntity_add_component(
     // The memory is handled by the entity manager.
     void *heap_comp_data = malloc(comp_data_size);
     memcpy(heap_comp_data, comp_data, comp_data_size);
-    lmHashMap_set(ecs->components, &(lmComponent){.id=comp_id, .entity_id=entity_id, .data=heap_comp_data});
+    lmHashMap_set(ecs->components, &(lmComponent){.id=comp_id, .entity_id=entity_id, .data=heap_comp_data, .allocated=true});
 
     lmEntity *entity = lmHashMap_get(ecs->entities, &(lmEntity){.id=entity_id});
     entity->comp_ids[entity->comps_size] = comp_id;
     entity->comps_size++;
 }
 
-void lmEntity_add_system(
+void lmECS_add_component_p(
+    lmECS *ecs,
+    lm_uint64 entity_id,
+    lm_uint64 comp_id,
+    void *comp_data
+) {
+    lmHashMap_set(ecs->components, &(lmComponent){.id=comp_id, .entity_id=entity_id, .data=comp_data, .allocated=false});
+
+    lmEntity *entity = lmHashMap_get(ecs->entities, &(lmEntity){.id=entity_id});
+    entity->comp_ids[entity->comps_size] = comp_id;
+    entity->comps_size++;
+}
+
+void lmECS_add_system(
     lmECS *ecs,
     const char *system_name,
     lmSystem_function system_function,
     lm_uint64 *comp_ids,
-    size_t comp_ids_size
+    size_t comp_ids_size,
+    void *user_context
 ) {
     lm_uint64 *heap_comp_ids = (lm_uint64 *)malloc(sizeof(lm_uint64) * comp_ids_size);
 
@@ -118,24 +132,27 @@ void lmEntity_add_system(
         heap_comp_ids[i] = comp_ids[i];
     }
 
-    lmHashMap_set(ecs->systems, &(lmSystem){.name=system_name, .function=system_function, .comp_ids=heap_comp_ids, .comp_ids_size=comp_ids_size});
+    lmHashMap_set(ecs->systems, &(lmSystem){.name=system_name, .function=system_function, .comp_ids=heap_comp_ids, .comp_ids_size=comp_ids_size, .user_context=user_context});
 }
 
-static inline bool _lm_array_match(lm_uint64 arr1[], size_t size1, lm_uint64 arr2[], size_t size2) {
-    lm_int64 sum = 0;
-
-    for (size_t i = 0; i < size1; i++) {
-        sum += arr1[i];
-    }
-
+static inline bool _lm_match_comps(lm_uint64 arr1[], size_t size1, lm_uint64 arr2[], size_t size2) {
     for (size_t i = 0; i < size2; i++) {
-        sum -= arr2[i];
+        bool found = false;
+
+        for (size_t j = 0; j < size1; j++) {
+            if (arr2[i] == arr1[j]) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) return false;
     }
 
-    return (sum == 0);
+    return true;
 }
 
-void lmEntity_run_system(lmECS *ecs, const char *system_name) {
+void lmECS_run_system(lmECS *ecs, const char *system_name) {
     lmSystem *system = (lmSystem *)lmHashMap_get(ecs->systems, &(lmSystem){.name=system_name});
     size_t system_comps = system->comp_ids_size;
 
@@ -147,12 +164,12 @@ void lmEntity_run_system(lmECS *ecs, const char *system_name) {
         lmEntity *entity = (lmEntity *)item;
 
         // Entity has all the components the system requires
-        if (_lm_array_match(entity->comp_ids, entity->comps_size, system->comp_ids, system->comp_ids_size)) {
+        if (_lm_match_comps(entity->comp_ids, entity->comps_size, system->comp_ids, system->comp_ids_size)) {
             for (size_t j = 0; j < system_comps; j++) {
                 comps[j] = lmHashMap_get(ecs->components, &(lmComponent){.id=system->comp_ids[j], .entity_id=entity->id});
             }
 
-            system->function(entity->id, comps, system_comps);
+            system->function(entity->id, comps, system_comps, system->user_context);
         }
     }
 

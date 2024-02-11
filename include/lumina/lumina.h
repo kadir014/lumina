@@ -30,12 +30,21 @@
 #include "lumina/core/window.h"
 #include "lumina/core/clock.h"
 #include "lumina/core/ecs.h"
+#include "lumina/core/hwinfo.h"
 
 #include "lumina/components/transform.h"
+#include "lumina/components/sprite.h"
 
 #include "lumina/graphics/color.h"
 #include "lumina/graphics/draw.h"
+#include "lumina/graphics/texture.h"
 
 #include "lumina/resource/resource_manager.h"
+
+#include "lumina/math/math.h"
+#include "lumina/math/constants.h"
+#include "lumina/math/hash.h"
+#include "lumina/math/random.h"
+#include "lumina/math/vector.h"
 
 #endif
