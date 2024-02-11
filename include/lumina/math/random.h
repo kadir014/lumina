@@ -62,7 +62,7 @@ static inline int irandom(int lower, int higher) {
  * @return bool
  */
 static inline bool brandom() {
-    return irand(0, 1);
+    return irandom(0, 1);
 }
 
 
