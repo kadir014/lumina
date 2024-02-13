@@ -16,9 +16,9 @@
 
 
 /**
- * @file graphics/texture.h
+ * @file resource/texture.h
  * 
- * @brief Texture.
+ * @brief Texture resource.
  */
 
 
@@ -27,13 +27,10 @@
  */
 typedef struct {
     SDL_Texture *sdl_texture;
+    const char *filepath;
 } lmTexture;
 
-lmTexture *lmTexture_new(SDL_Texture *sdl_texture);
-
-lmTexture *lmTexture_from_png(lmWindow *window, const char *filepath);
-
-void lmTexture_free(lmTexture *texture);
+lmTexture lmTexture_load(lmWindow *window, const char *filepath);
 
 
 #endif
