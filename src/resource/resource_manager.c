@@ -10,6 +10,7 @@
 
 #include "lumina/resource/resource_manager.h"
 #include "lumina/math/hash.h"
+#include "lumina/core/game.h"
 
 
 /**
@@ -19,13 +20,19 @@
  */
 
 
-static lm_uint64 _lmResourceManager_font_cache_hasher(void *item) {
+static lm_uint64 _font_hasher(void *item) {
     lmFont *font = (lmFont *)item;
 
     // TODO: combine path + size
-    lm_uint64 hash = lm_fnv1a(font->path);
+    lm_uint64 hash = lm_fnv1a(font->filepath);
 
     return hash;
+}
+
+static lm_uint64 _texture_hasher(void *item) {
+    lmTexture *texture = (lmTexture *)item;
+
+    return lm_fnv1a(texture->filepath);
 }
 
 
@@ -33,10 +40,15 @@ lmResourceManager *lmResourceManager_new() {
     lmResourceManager *resource_manager = LM_NEW(lmResourceManager);
     LM_MEMORY_ASSERT(resource_manager);
 
-    resource_manager->font_cache = lmHashMap_new(
-        sizeof(lmFont), 0, _lmResourceManager_font_cache_hasher
+    resource_manager->fonts = lmHashMap_new(
+        sizeof(lmFont), 0, _font_hasher
     );
-    LM_MEMORY_ASSERT(resource_manager->font_cache);
+    LM_MEMORY_ASSERT(resource_manager->fonts);
+
+    resource_manager->textures = lmHashMap_new(
+        sizeof(lmTexture), 0, _texture_hasher
+    );
+    LM_MEMORY_ASSERT(resource_manager->textures);
 
     return resource_manager;
 }
@@ -46,41 +58,55 @@ void lmResourceManager_free(lmResourceManager *resource_manager) {
 
     size_t iter = 0;
     void *item;
-    while (lmHashMap_iter(resource_manager->font_cache, &iter, &item)) {
+    while (lmHashMap_iter(resource_manager->fonts, &iter, &item)) {
         lmFont *font = (lmFont *)item;
         TTF_CloseFont(font->ttf);
     }
 
-    lmHashMap_free(resource_manager->font_cache);
+    iter = 0;
+    while (lmHashMap_iter(resource_manager->fonts, &iter, &item)) {
+        lmTexture *texture = (lmTexture *)item;
+        SDL_DestroyTexture(texture->sdl_texture);
+    }
+
+    lmHashMap_free(resource_manager->fonts);
+    lmHashMap_free(resource_manager->textures);
 }
 
-void lmResourceManager_load_font(
-    lmResourceManager *resource_manager,
-    char *path,
+void lmResource_load_font(
+    lmGame *game,
+    char *filepath,
     lm_uint32 size
 ) {
-    lmFont font;
+    lmFont font = lmFont_load(filepath, size);
 
-    font.ttf = TTF_OpenFont(path, size);
-    if (!font.ttf) LM_ERROR(TTF_GetError());
-
-    TTF_SetFontStyle(font.ttf, TTF_STYLE_NORMAL);
-    TTF_SetFontOutline(font.ttf, 0);
-    TTF_SetFontKerning(font.ttf, 1);
-    TTF_SetFontHinting(font.ttf, TTF_HINTING_NORMAL);
-
-    font.path = path;
-    font.size = size;
-
-    lmHashMap_set(resource_manager->font_cache, &font);
+    lmHashMap_set(game->resource_manager->fonts, &font);
 }
 
-lmFont *lmResourceManager_get_font(
-    lmResourceManager *resource_manager,
+lmFont *lmResource_get_font(
+    lmGame *game,
     char *name,
     lm_uint32 size
 ) {
     return lmHashMap_get(
-        resource_manager->font_cache, &(lmFont){.path=name, .size=size}
+        game->resource_manager->fonts, &(lmFont){.filepath=name, .size=size}
+    );
+}
+
+void lmResource_load_texture(
+    lmGame *game,
+    char *filepath
+) {
+    lmTexture texture = lmTexture_load(game->window, filepath);
+
+    lmHashMap_set(game->resource_manager->textures, &texture);
+}
+
+lmTexture *lmResource_get_texture(
+    lmGame *game,
+    char *name
+) {
+    return lmHashMap_get(
+        game->resource_manager->textures, &(lmTexture){.filepath=name}
     );
 }

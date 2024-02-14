@@ -13,6 +13,8 @@
 
 #include "lumina/_lumina.h"
 #include "lumina/collections/hashmap.h"
+#include "lumina/resource/font.h"
+#include "lumina/resource/texture.h"
 
 
 /**
@@ -23,30 +25,34 @@
 
 
 typedef struct {
-    TTF_Font *ttf;
-    char *path;
-    lm_uint32 size;
-} lmFont;
-
-
-typedef struct {
-    lmHashMap *font_cache;
+    lmHashMap *fonts;
+    lmHashMap *textures;
 } lmResourceManager;
 
 lmResourceManager *lmResourceManager_new();
 
 void lmResourceManager_free(lmResourceManager *resource_manager);
 
-void lmResourceManager_load_font(
-    lmResourceManager *resource_manager,
-    char *path,
+void lmResource_load_font(
+    struct lmGame *game,
+    char *filepath,
     lm_uint32 size
 );
 
-lmFont *lmResourceManager_get_font(
-    lmResourceManager *resource_manager,
+lmFont *lmResource_get_font(
+    struct lmGame *game,
     char *name,
     lm_uint32 size
+);
+
+void lmResource_load_texture(
+    struct lmGame *game,
+    char *filepath
+);
+
+lmTexture *lmResource_get_texture(
+    struct lmGame *game,
+    char *name
 );
 
 
