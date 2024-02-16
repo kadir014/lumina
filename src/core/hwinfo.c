@@ -24,7 +24,11 @@
 
 
 size_t lm_get_current_memory_usage() {
-    #if LM_PLATFORM == LM_PLATFORM_WINDOWS
+    #if LM_PLATFORM == LM_PLATFORM_WEB
+
+        return 0;
+
+    #elif LM_PLATFORM == LM_PLATFORM_WINDOWS
 
         // https://learn.microsoft.com/en-us/windows/win32/psapi/collecting-memory-usage-information-for-a-process
 
