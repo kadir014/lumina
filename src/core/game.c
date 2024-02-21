@@ -53,7 +53,7 @@ lmGame *lmGame_new(lmGameDef game_def) {
     );
 
     game->resource_manager = lmResourceManager_new();
-    lmResourceManager_load_font(game->resource_manager, "assets/FiraCode-SemiBold.ttf", 12);
+    lmResource_load_font(game, "assets/FiraCode-SemiBold.ttf", 12);
 
     game->ecs = lmECS_new();
 
@@ -98,33 +98,33 @@ static void lmGame_main_loop(void *game_p) {
 
     if (game->on_update) game->on_update(game);
 
-    SDL_SetRenderDrawColor(game->window->sdl_renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(game->window->sdl_renderer, 255, 255, 255, 255);
     SDL_RenderClear(game->window->sdl_renderer);
 
     if (game->on_render) game->on_render(game);
 
     //lmFont *font = lmResourceManager_get_font("FiraCode", 18);
-    lmFont *font = lmResourceManager_get_font(game->resource_manager, "assets/FiraCode-SemiBold.ttf", 12);
+    lmFont *font = lmResource_get_font(game, "assets/FiraCode-SemiBold.ttf", 12);
     lmColor text_color = (lmColor){255, 255, 255, 255};
 
-    SDL_SetRenderDrawColor(game->window->sdl_renderer, 0, 0, 0, 200);
-    SDL_RenderFillRect(game->window->sdl_renderer, &(SDL_Rect){0, 0, 220, 106});
+    SDL_SetRenderDrawColor(game->window->sdl_renderer, 0, 0, 0, 150);
+    SDL_RenderFillRect(game->window->sdl_renderer, &(SDL_Rect){0, 0, 220, 92});
 
-    char text0[24];
-    sprintf(text0, "Lumina %d.%d.%d", LM_VERSION_MAJOR, LM_VERSION_MINOR, LM_VERSION_PATCH);
-    lm_draw_text(game, font, text0, 5, 5 + (16 * 0), text_color);
+    // char text0[24];
+    // sprintf(text0, "Lumina %d.%d.%d", LM_VERSION_MAJOR, LM_VERSION_MINOR, LM_VERSION_PATCH);
+    // lm_draw_text(game, font, text0, 5, 5 + (16 * 0), text_color);
 
     char text1[24];
     sprintf(text1, "SDL %d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
-    lm_draw_text(game, font, text1, 5, 5 + (16 * 1), text_color);
+    lm_draw_text(game, font, text1, 5, 5 + (16 * 0), text_color);
 
     char text2[16];
-    sprintf(text2, "FPS: %.1f", game->clock->fps+3);
-    lm_draw_text(game, font, text2, 5, 5 + (16 * 2), text_color);
+    sprintf(text2, "FPS: %.1f", game->clock->fps);
+    lm_draw_text(game, font, text2, 5, 5 + (16 * 1), text_color);
 
     char text3[24];
     sprintf(text3, "Entities: %llu", (unsigned long long)game->ecs->entities->count);
-    lm_draw_text(game, font, text3, 5, 5 + (16 * 3), text_color);
+    lm_draw_text(game, font, text3, 5, 5 + (16 * 2), text_color);
 
     char text4[64];
 
@@ -140,13 +140,13 @@ static void lmGame_main_loop(void *game_p) {
     else driver = "Unknown";
 
     sprintf(text4, "Renderer: SDL2 (%s)", driver);
-    lm_draw_text(game, font, text4, 5, 5 + (16 * 4), text_color);
+    lm_draw_text(game, font, text4, 5, 5 + (16 * 3), text_color);
 
     char text5[16];
     size_t memory_used = lm_get_current_memory_usage();
     double memory_used_mb = (double)memory_used / 1048576.0;
     sprintf(text5, "Memory: %.1fMB", memory_used_mb);
-    lm_draw_text(game, font, text5, 5, 5 + (16 * 5), text_color);
+    lm_draw_text(game, font, text5, 5, 5 + (16 * 4), text_color);
 
     SDL_RenderPresent(game->window->sdl_renderer);
 }

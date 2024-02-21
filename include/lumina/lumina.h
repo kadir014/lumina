@@ -37,9 +37,9 @@
 
 #include "lumina/graphics/color.h"
 #include "lumina/graphics/draw.h"
-#include "lumina/graphics/texture.h"
 
 #include "lumina/resource/resource_manager.h"
+#include "lumina/resource/texture.h"
 
 #include "lumina/math/math.h"
 #include "lumina/math/constants.h"

@@ -12,7 +12,7 @@
 #define _LUMINA_COMPONENTS_SPRITE_H
 
 #include "lumina/_lumina.h"
-#include "lumina/graphics/texture.h"
+#include "lumina/resource/texture.h"
 
 
 /**
