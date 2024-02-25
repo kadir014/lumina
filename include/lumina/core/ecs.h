@@ -34,6 +34,11 @@ typedef struct {
     bool allocated;
 } lmComponent;
 
+typedef struct {
+    lmComponent **comps;
+    size_t size;
+} lmComponents;
+
 /**
  * @brief Internal representation of entities.
  */
@@ -43,8 +48,12 @@ typedef struct {
     size_t comps_size; /**< Size of the components array. */
 } lmEntity;
 
-// System function type
-typedef void ( *lmSystem_function)(lm_uint64 entity_id, lmComponent **comps, size_t comps_size, void *user_context);
+// System function callback type
+typedef void ( *lmSystem_function)(
+    lm_uint64 entity_id,
+    lmComponents comps,
+    void *user_context
+);
 
 /**
  * @brief Internal representation of systems.
@@ -87,6 +96,8 @@ void lmECS_add_component_p(
     lm_uint64 comp_id,
     void *comp_data
 );
+
+void *lmECS_get_component_data(lm_uint64 comp_id, lmComponents comps);
 
 void lmECS_add_system(
     lmECS *ecs,
