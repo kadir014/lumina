@@ -17,13 +17,21 @@
 /**
  * @file math/math.h
  * 
- * @brief Math.
+ * @brief General math utilities.
  */
 
 
-double dclamp(double d, double min, double max) {
+/**
+ * @brief Clamp double value between a range
+ * 
+ * @param value Value
+ * @param min Minimum of range
+ * @param max Maximum of range
+ * @return double 
+ */
+double lm_dclamp(double value, double min, double max) {
     // Generates good ASM: https://stackoverflow.com/a/16659263
-    const double t = d < min ? min : d;
+    const double t = value < min ? min : value;
     return t > max ? max : t;
 }
 

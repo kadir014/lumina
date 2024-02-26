@@ -24,7 +24,7 @@
 
 
 // Maximum number of components per entity that can be allocated.
-#define LM_MAX_COMPONENTS 256
+#define LM_MAX_COMPONENTS 64
 
 
 #endif

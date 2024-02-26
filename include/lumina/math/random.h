@@ -17,18 +17,20 @@
 /**
  * @file math/random.h
  * 
- * @brief Pseudo-random functions.
+ * @brief Pseudo-random generator functions.
  */
 
 
 /**
  * @brief Return random float in range [lower, higher).
  * 
+ * This function uses standard library's PRNG.
+ * 
  * @param lower Lower limit
  * @param higher Higher limit
  * @return float 
  */
-static inline float frandom(float lower, float higher) {
+static inline float lm_frandom(float lower, float higher) {
     float normal = rand() / (float)RAND_MAX;
     return lower + normal * (higher - lower);
 }
@@ -36,11 +38,13 @@ static inline float frandom(float lower, float higher) {
 /**
  * @brief Return random double in range [lower, higher).
  * 
+ * This function uses standard library's PRNG.
+ * 
  * @param lower Lower limit
  * @param higher Higher limit
  * @return double 
  */
-static inline double drandom(double lower, double higher) {
+static inline double lm_drandom(double lower, double higher) {
     double normal = rand() / (double)RAND_MAX;
     return lower + normal * (higher - lower);
 }
@@ -48,21 +52,25 @@ static inline double drandom(double lower, double higher) {
 /**
  * @brief Return random integer in range [lower, higher).
  * 
+ * This function uses standard library's PRNG.
+ * 
  * @param lower Lower limit
  * @param higher Higher limit
  * @return int 
  */
-static inline int irandom(int lower, int higher) {
+static inline int lm_irandom(int lower, int higher) {
     return (rand() % (higher - lower + 1)) + lower;
 }
 
 /**
  * @brief Return random boolean.
  * 
+ * This function uses standard library's PRNG.
+ * 
  * @return bool
  */
-static inline bool brandom() {
-    return irandom(0, 1);
+static inline bool lm_brandom() {
+    return lm_irandom(0, 1);
 }
 
 

@@ -24,14 +24,14 @@
 /**
  * @brief Cantor pairing function for unsigned 64-bit integers.
  * 
- * https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function
- * π(x, y) = ((x + y) * (x + y + 1) / 2) + y
- * 
  * @param x First number
  * @param y Second number
  * @return lm_uint64 
  */
 static inline lm_uint64 lm_u64cantor(lm_uint64 x, lm_uint64 y) {
+    // https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function
+    // π(x, y) = ((x + y) * (x + y + 1) / 2) + y
+
     lm_uint64 sum = x + y;
     return ((sum * (sum + 1)) / 2) + y;
 }
@@ -43,12 +43,12 @@ static inline lm_uint64 lm_u64cantor(lm_uint64 x, lm_uint64 y) {
 /**
  * @brief FNV-1a hash.
  * 
- * https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
- * 
  * @param str Zero-terminated string to hash
  * @return lm_uint64
  */
 static inline lm_uint64 lm_fnv1a(const char *str) {
+    // https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
+    
     lm_uint64 hash = LM_FNV_BASIS;
 
     for (size_t i = 0; str[i] != '\0'; i++) {
